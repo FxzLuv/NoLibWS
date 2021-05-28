@@ -46,7 +46,7 @@ module.exports = class WebSocketClient extends EventEmitter{
                 return this.socket.write(this._binaryToBuffer(response));
             }
             if(binary.startsWith("0100100001010100010101000101000000101111001100010010111000110001")){ // HTTP/1.1
-                console.log("[~] Upgrade.");
+                if(verbose)console.log("[~] Upgrade.");
                 this.emit("upgrade");
                 return;
             }
