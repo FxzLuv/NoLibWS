@@ -35,6 +35,7 @@ module.exports = class WebSocketClient extends EventEmitter{
                                 "Sec-WebSocket-Version: 13\r\n" +
                                 "\r\n"  );
         });
+        this.tempStorage = Buffer.from([]);
         this.socket.on("data", (data) => {
             let binary = this._bufferToBinary(data);
             if(binary.startsWith("10001001")){ // Ping.
@@ -50,11 +51,16 @@ module.exports = class WebSocketClient extends EventEmitter{
                 this.emit("upgrade");
                 return;
             }
-            this.emit("data", this.decode(binary));
+            if(binary.startsWith("0")){
+              this.tempStorage = Buffer.from(Array.from(this.tempStorage).concat(Array.from(this.decode(binary))));
+            }else{
+              this.tempStorage = Buffer.from(Array.from(this.tempStorage).concat(Array.from(this.decode(binary))));
+              this.emit("data", this.tempStorage);
+              this.tempStorage = Buffer.from([]);
+            }
         });
     }
     send(data){
-        //less go.
         let binary_packet = "100000011";
         //0x48 0x65 0x6c 0x6c 0x6f => Hello
         //1000 0001 0 0000101 [01001000 01100101 01101100 01101100 01101111]
