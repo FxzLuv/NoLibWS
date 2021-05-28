@@ -21,7 +21,7 @@ module.exports = class WebSocketClient extends EventEmitter{
         let tls = url.startsWith("wss://") ? true : false;
         url = this.cleanURL(url);
         let port = url.split(":").length == 1 ? 80 : parseInt(url.split(":")[1].split("/")[0]);
-        let host = url.split("/")[0];
+        let host = url.split(":").length == 1 ? url.split("/")[0] : url.split(":")[0];
         let path = "/" + url.split("/").slice(1).join("/");
         if(verbose)console.log("[~] Connecting to " + (tls ? "wss://" : "ws://") + host + ":" + port + path);
         this._connect = tls ? require("tls").connect : require("net").connect;
